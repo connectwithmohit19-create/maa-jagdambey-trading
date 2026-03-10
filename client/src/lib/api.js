@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 const api = axios.create({
-  baseURL: "http://localhost:5001/api",
+  baseURL: `${import.meta.env.VITE_API_URL || "http://localhost:5001"}/api`,
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -124,5 +124,5 @@ export const catalogueApi = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 export const getCatalogueProducts = (params = {}) => catalogueApi.get('/products', { params });
-export const getCatalogueProduct  = (id) => catalogueApi.get(`/products/${id}`);
+export const getCatalogueProduct = (id) => catalogueApi.get(`/products/${id}`);
 export const getCatalogueCategories = () => catalogueApi.get('/categories');
