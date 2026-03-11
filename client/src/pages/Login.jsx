@@ -4,13 +4,13 @@ import { useAuth } from '../context/AuthContext';
 import { login } from '../lib/api';
 
 export default function Login() {
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
   const { setAuth } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showPwd, setShowPwd]   = useState(false);
-  const [error, setError]       = useState('');
-  const [loading, setLoading]   = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,9 +19,9 @@ export default function Login() {
     setLoading(true);
     try {
       const res = await login(username.trim(), password);
-      localStorage.setItem('mjt_token', res.data.token);
-      localStorage.setItem('mjt_user', JSON.stringify(res.data.user));
-      setAuth(res.data.user);
+      localStorage.setItem('mjt_token', res.token);
+      localStorage.setItem('mjt_user', JSON.stringify(res.user));
+      setAuth(res.user);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
