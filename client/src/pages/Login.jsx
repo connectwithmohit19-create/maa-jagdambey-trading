@@ -13,6 +13,15 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+
+  useEffect(() => {
+    const token = localStorage.getItem("mjt_token");
+    if (token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -31,10 +40,16 @@ export default function Login() {
       const res = await login(username.trim(), password);
 
       if (res.success) {
+        const authData = {
+          token: res.token,
+          user: res.user
+        };
+
         localStorage.setItem('mjt_token', res.token);
         localStorage.setItem('mjt_user', JSON.stringify(res.user));
-        setAuth(res.user);
-        navigate('/dashboard');
+
+        setAuth(authData);
+        navigate('/dashboard', { replace: true });
       } else {
         setError(res.message || 'Login failed');
       }
