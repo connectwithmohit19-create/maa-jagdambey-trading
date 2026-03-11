@@ -31,8 +31,10 @@ api.interceptors.response.use(
 );
 
 // ─── Auth ─────────────────────────────────────────────────────
-export const login = (username, password) =>
-  api.post('/auth/login', { username, password });
+export const login = async (username, password) => {
+  const res = await api.post('/auth/login', { username, password });
+  return res.data;
+};
 export const getMe = () => api.get('/auth/me');
 export const changePassword = (currentPassword, newPassword) =>
   api.post('/auth/change-password', { currentPassword, newPassword });
@@ -95,7 +97,12 @@ export const setPortalCredentials = (data) => api.post('/portal/admin/set-creden
 
 // ─── Portal (customer-facing, use portalApi for these) ───────
 
-export const portalApi = axios.create({ baseURL: 'http://localhost:5001/api/portal', timeout: 15000, headers: { 'Content-Type': 'application/json' } });
+export const portalApi = axios.create({
+  baseURL: `${import.meta.env.VITE_API_URL}/api/portal`,
+  timeout: 15000,
+  headers: { 'Content-Type': 'application/json' },
+});
+
 portalApi.interceptors.request.use((config) => {
   const token = localStorage.getItem('mjt_portal_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -119,7 +126,7 @@ export const portalGetPayments = () => portalApi.get('/payments');
 
 // ─── Public Catalogue (no auth needed) ───────────────────────
 export const catalogueApi = axios.create({
-  baseURL: 'http://localhost:5001/api/catalogue',
+  baseURL: `${import.meta.env.VITE_API_URL}/api/catalogue`,
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });
