@@ -15,19 +15,36 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!username.trim() || !password) { setError('Please enter username and password.'); return; }
-    setLoading(true);
-    try {
-      const res = await login(username.trim(), password);
-      localStorage.setItem('mjt_token', res.token);
-      localStorage.setItem('mjt_user', JSON.stringify(res.user));
-      setAuth(res.user);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-    } finally { setLoading(false); }
-  };
 
+    if (!username.trim() || !password) {
+      setError('Please enter username and password.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      localStorage.removeItem('mjt_token');
+      localStorage.removeItem('mjt_user');
+
+      const res = await login(username.trim(), password);
+
+      if (res.success) {
+        localStorage.setItem('mjt_token', res.token);
+        localStorage.setItem('mjt_user', JSON.stringify(res.user));
+        setAuth(res.user);
+        navigate('/dashboard');
+      } else {
+        setError(res.message || 'Login failed');
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen flex" style={{ background: '#EFDFCE' }}>
       {/* Left panel — decorative */}
